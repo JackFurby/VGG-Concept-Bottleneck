@@ -47,23 +47,10 @@ class CUBDataset(Dataset):
 
     def __getitem__(self, idx):
         img_data = self.data[idx]
-        img_path = img_data['img_path']
-        # Trim unnecessary paths
-        try:
-            idx = img_path.split('/').index('CUB_200_2011')
-            if self.image_dir != 'images':
-                img_path = '/'.join([self.image_dir] + img_path.split('/')[idx+1:])
-                img_path = img_path.replace('images/', '')
-            else:
-                img_path = '/'.join(img_path.split('/')[idx:])
-            img = Image.open(img_path).convert('RGB')
-        except:
-            img_path_split = img_path.split('/')
-            split = 'train' if self.is_train else 'test'
-            img_path = '/'.join(img_path_split[:2] + [split] + img_path_split[2:])
-            img = Image.open(img_path).convert('RGB')
+        img_path = os.getcwd() + "/datasets/CUB_200_2011/data/images/" + img_data['img_path']
+        img = Image.open(img_path).convert('RGB')
 
-        class_label = img_data['class_label']
+        class_label = img_data['class_label'] - 1
         if self.transform:
             img = self.transform(img)
 

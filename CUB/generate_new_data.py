@@ -67,7 +67,7 @@ def get_class_attributes_data(min_class_count, out_dir, modify_data_dir='', keep
     Use train.pkl to aggregate attributes on class level and only keep those that are predominantly 1 for at least min_class_count classes
     Transform data in modify_data_dir file using the class attribute statistics and save the new dataset to out_dir
     If keep_instance_data is True, then retain the original values of the selected attributes. Otherwise save aggregated class level attributes
-    In our paper, we set min_class_count to be 10 and only use the following 112 attributes of indices 
+    In our paper, we set min_class_count to be 10 and only use the following 112 attributes of indices
     [1, 4, 6, 7, 10, 14, 15, 20, 21, 23, 25, 29, 30, 35, 36, 38, 40, 44, 45, 50, 51, 53, 54, 56, 57, 59, 63, 64, 69, 70, 72, 75, 80, 84, 90, 91, \
     93, 99, 101, 106, 110, 111, 116, 117, 119, 125, 126, 131, 132, 134, 145, 149, 151, 152, 153, 157, 158, 163, 164, 168, 172, 178, 179, 181, \
     183, 187, 188, 193, 194, 196, 198, 202, 203, 208, 209, 211, 212, 213, 218, 220, 221, 225, 235, 236, 238, 239, 240, 242, 243, 244, 249, 253, \
@@ -127,7 +127,7 @@ def get_attr_groups(attr_name_file):
         line0 = all_lines[0]
         prefix = line0.split()[1][:10]
         for i, line in enumerate(all_lines[1:]):
-            curr = line.split()[1][:10] 
+            curr = line.split()[1][:10]
             if curr != prefix:
                 new_group_idx.append(i+1)
                 prefix = curr
@@ -168,7 +168,7 @@ def change_img_dir_data(new_image_folder, datasets, data_dir='', out_dir='masked
     """
     Change the prefix of img_path data in data_dir to new_image_folder
     """
-    compute_fn = lambda d: os.path.join(new_image_folder, d['img_path'].split('/')[-2], d['img_path'].split('/')[-1]) 
+    compute_fn = lambda d: os.path.join(new_image_folder, d['img_path'].split('/')[-2], d['img_path'].split('/')[-1])
     create_new_dataset(out_dir, 'img_path', datasets=datasets, compute_fn=compute_fn, data_dir=data_dir)
 
 def create_logits_data(model_path, out_dir, data_dir='', use_relu=False, use_sigmoid=False):
@@ -184,14 +184,14 @@ def create_logits_data(model_path, out_dir, data_dir='', use_relu=False, use_sig
 def get_representation_linear_probe(model_path, layer_idx, out_dir, data_dir):
     model = torch.load(model_path)
     get_representation_train = lambda d: inference_no_grad(d['img_path'], model, use_relu=False, use_sigmoid=False, is_train=True, layer_idx=layer_idx)
-    get_representation_test = lambda d: inference_no_grad(d['img_path'], model, use_relu=False, use_sigmoid=False, is_train=False, layer_idx=layer_idx) 
+    get_representation_test = lambda d: inference_no_grad(d['img_path'], model, use_relu=False, use_sigmoid=False, is_train=False, layer_idx=layer_idx)
     create_new_dataset(out_dir, 'representation_logits', get_representation_train, datasets=['train'], data_dir=data_dir)
     create_new_dataset(out_dir, 'representation_logits', get_representation_test, datasets=['val', 'test'], data_dir=data_dir)
 
 
 def inference(img_path, model, use_relu, use_sigmoid, is_train, resol=299, layer_idx=None):
     """
-    For a single image stored in img_path, run inference using model and return A\hat (if layer_idx is None) or values extracted from layer layer_idx 
+    For a single image stored in img_path, run inference using model and return A\hat (if layer_idx is None) or values extracted from layer layer_idx
     """
     model.eval()
     # see utils.py
@@ -210,14 +210,7 @@ def inference(img_path, model, use_relu, use_sigmoid, is_train, resol=299, layer
             transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[2, 2, 2])
         ])
 
-    # Trim unnecessary paths
-    try:
-        idx = img_path.split('/').index('CUB_200_2011')
-        img_path = '/'.join(img_path.split('/')[idx:])
-    except:
-        img_path_split = img_path.split('/')
-        split = 'train' if is_train else 'test'
-        img_path = '/'.join(img_path_split[:2] + [split] + img_path_split[2:])
+    img_path = os.getcwd() + "/datasets/CUB_200_2011/data/images/" + img_path
     img = Image.open(img_path).convert('RGB')
     img_tensor = transform(img).unsqueeze(0)
     input_var = torch.autograd.Variable(img_tensor).cuda()

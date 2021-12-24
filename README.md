@@ -1,8 +1,6 @@
-# Concept Bottleneck Models
+# VGG Concept Bottleneck Models
 
-![teaser](https://github.com/yewsiang/ConceptBottleneck/blob/master/figures/teaser_landscape.png)
-
-This repository contains code and scripts for the following paper:
+This repository contains code and scripts from the following paper (with the model architecture change to VGG):
 
 > Concept Bottleneck Models
 >
@@ -38,16 +36,19 @@ These models also allow for richer human-model interaction: accuracy improves si
 
 ## Prerequisites
 We used the same environment as Codalab's default gpu setting, please run `pip install -r requirements.txt`. Main packages are:
-- matplotlib 3.1.1
-- numpy 1.17.1
-- pandas 0.25.1
-- Pillow 6.2.2
-- scipy 1.3.1
-- scikit-learn 0.21.3
-- torch 1.1.0
-- torchvision 0.4.0
+- matplotlib 3.5.0
+- numpy 1.21.4
+- pandas 1.3.4
+- Pillow 8.4.0
+- scipy 1.7.3
+- scikit-learn 1.0.1
+- torch 1.10.0
+- torchvision 0.11.1
+
+
 
 Note that we updated Pillow and removed tensorflow-gpu and tensorboard from requirements.txt.  
+Note Python version is 3.8
 
 ### Docker
 You can pull the Docker image directly from Docker Hub.

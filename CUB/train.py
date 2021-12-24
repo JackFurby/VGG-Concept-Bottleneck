@@ -36,7 +36,7 @@ def run_epoch_simple(model, optimizer, loader, loss_meter, acc_meter, criterion,
         inputs_var = inputs_var.cuda() if torch.cuda.is_available() else inputs_var
         labels_var = torch.autograd.Variable(labels).cuda()
         labels_var = labels_var.cuda() if torch.cuda.is_available() else labels_var
-        
+
         outputs = model(inputs_var)
         loss = criterion(outputs, labels_var)
         acc = accuracy(outputs, labels, topk=(1,))
@@ -79,29 +79,16 @@ def run_epoch(model, optimizer, loader, loss_meter, acc_meter, criterion, attr_c
         labels_var = torch.autograd.Variable(labels)
         labels_var = labels_var.cuda() if torch.cuda.is_available() else labels_var
 
-        if is_training and args.use_aux:
-            outputs, aux_outputs = model(inputs_var)
-            losses = []
-            out_start = 0
-            if not args.bottleneck: #loss main is for the main task label (always the first output)
-                loss_main = 1.0 * criterion(outputs[0], labels_var) + 0.4 * criterion(aux_outputs[0], labels_var)
-                losses.append(loss_main)
-                out_start = 1
-            if attr_criterion is not None and args.attr_loss_weight > 0: #X -> A, cotraining, end2end
-                for i in range(len(attr_criterion)):
-                    losses.append(args.attr_loss_weight * (1.0 * attr_criterion[i](outputs[i+out_start].squeeze().type(torch.cuda.FloatTensor), attr_labels_var[:, i]) \
-                                                            + 0.4 * attr_criterion[i](aux_outputs[i+out_start].squeeze().type(torch.cuda.FloatTensor), attr_labels_var[:, i])))
-        else: #testing or no aux logits
-            outputs = model(inputs_var)
-            losses = []
-            out_start = 0
-            if not args.bottleneck:
-                loss_main = criterion(outputs[0], labels_var)
-                losses.append(loss_main)
-                out_start = 1
-            if attr_criterion is not None and args.attr_loss_weight > 0: #X -> A, cotraining, end2end
-                for i in range(len(attr_criterion)):
-                    losses.append(args.attr_loss_weight * attr_criterion[i](outputs[i+out_start].squeeze().type(torch.cuda.FloatTensor), attr_labels_var[:, i]))
+        outputs = model(inputs_var)
+        losses = []
+        out_start = 0
+        if not args.bottleneck:
+            loss_main = criterion(outputs[0], labels_var)
+            losses.append(loss_main)
+            out_start = 1
+        if attr_criterion is not None and args.attr_loss_weight > 0: #X -> A, cotraining, end2end
+            for i in range(len(attr_criterion)):
+                losses.append(args.attr_loss_weight * attr_criterion[i](outputs[i+out_start].squeeze().type(torch.cuda.FloatTensor), attr_labels_var[:, i]))
 
         if args.bottleneck: #attribute accuracy
             sigmoid_outputs = torch.nn.Sigmoid()(torch.cat(outputs, dim=1))
@@ -197,11 +184,11 @@ def train(model, args):
             train_loss_meter, train_acc_meter = run_epoch_simple(model, optimizer, train_loader, train_loss_meter, train_acc_meter, criterion, args, is_training=True)
         else:
             train_loss_meter, train_acc_meter = run_epoch(model, optimizer, train_loader, train_loss_meter, train_acc_meter, criterion, attr_criterion, args, is_training=True)
- 
+
         if not args.ckpt: # evaluate on val set
             val_loss_meter = AverageMeter()
             val_acc_meter = AverageMeter()
-        
+
             with torch.no_grad():
                 if args.no_img:
                     val_loss_meter, val_acc_meter = run_epoch_simple(model, optimizer, val_loader, val_loss_meter, val_acc_meter, criterion, args, is_training=False)
@@ -222,15 +209,15 @@ def train(model, args):
 
         train_loss_avg = train_loss_meter.avg
         val_loss_avg = val_loss_meter.avg
-        
+
         logger.write('Epoch [%d]:\tTrain loss: %.4f\tTrain accuracy: %.4f\t'
                 'Val loss: %.4f\tVal acc: %.4f\t'
                 'Best val epoch: %d\n'
-                % (epoch, train_loss_avg, train_acc_meter.avg, val_loss_avg, val_acc_meter.avg, best_val_epoch)) 
+                % (epoch, train_loss_avg, train_acc_meter.avg, val_loss_avg, val_acc_meter.avg, best_val_epoch))
         logger.flush()
-        
+
         if epoch <= stop_epoch:
-            scheduler.step(epoch) #scheduler step to update lr at the end of epoch     
+            scheduler.step(epoch) #scheduler step to update lr at the end of epoch
         #inspect lr
         if epoch % 10 == 0:
             print('Current lr:', scheduler.get_lr())

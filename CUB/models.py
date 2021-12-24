@@ -1,12 +1,12 @@
 
-from CUB.template_model import MLP, inception_v3, End2EndModel
+from CUB.template_model import *
 
 
 # Independent & Sequential Model
 def ModelXtoC(pretrained, freeze, num_classes, use_aux, n_attributes, expand_dim, three_class):
-    return inception_v3(pretrained=pretrained, freeze=freeze, num_classes=num_classes, aux_logits=use_aux,
-                        n_attributes=n_attributes, bottleneck=True, expand_dim=expand_dim,
-                        three_class=three_class)
+    vgg_model = vgg16_bn(pretrained=pretrained, num_classes=num_classes,
+                        n_attributes=n_attributes, bottleneck=True, expand_dim=expand_dim)
+    return x_to_c_model(freeze=freeze, model=vgg_model)
 
 # Independent Model
 def ModelOracleCtoY(n_class_attr, n_attributes, num_classes, expand_dim):
@@ -25,9 +25,9 @@ def ModelXtoChat_ChatToY(n_class_attr, n_attributes, num_classes, expand_dim):
 # Joint Model
 def ModelXtoCtoY(n_class_attr, pretrained, freeze, num_classes, use_aux, n_attributes, expand_dim,
                  use_relu, use_sigmoid):
-    model1 = inception_v3(pretrained=pretrained, freeze=freeze, num_classes=num_classes, aux_logits=use_aux,
-                          n_attributes=n_attributes, bottleneck=True, expand_dim=expand_dim,
-                          three_class=(n_class_attr == 3))
+    vgg_model = vgg16_bn(pretrained=pretrained, num_classes=num_classes,
+                          n_attributes=n_attributes, bottleneck=True, expand_dim=expand_dim)
+    model1 = x_to_c_model(freeze=freeze, model=vgg_model)
     if n_class_attr == 3:
         model2 = MLP(input_dim=n_attributes * n_class_attr, num_classes=num_classes, expand_dim=expand_dim)
     else:
@@ -36,10 +36,12 @@ def ModelXtoCtoY(n_class_attr, pretrained, freeze, num_classes, use_aux, n_attri
 
 # Standard Model
 def ModelXtoY(pretrained, freeze, num_classes, use_aux):
-    return inception_v3(pretrained=pretrained, freeze=freeze, num_classes=num_classes, aux_logits=use_aux)
+    vgg_model = vgg16_bn(pretrained=pretrained, num_classes=num_classes)
+    return x_to_c_model(freeze=freeze, model=vgg_model)
 
 # Multitask Model
 def ModelXtoCY(pretrained, freeze, num_classes, use_aux, n_attributes, three_class, connect_CY):
-    return inception_v3(pretrained=pretrained, freeze=freeze, num_classes=num_classes, aux_logits=use_aux,
-                        n_attributes=n_attributes, bottleneck=False, three_class=three_class,
+    vgg_model = vgg16_bn(pretrained=pretrained, num_classes=num_classes,
+                        n_attributes=n_attributes, bottleneck=False,
                         connect_CY=connect_CY)
+    return x_to_c_model(freeze=freeze, model=vgg_model)
