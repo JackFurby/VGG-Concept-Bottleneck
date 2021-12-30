@@ -11,6 +11,7 @@ This repository contains code and scripts from the following paper:
 Changes:
 * The model in this repository has been changed to VGG 16
 * Added a model converter (details below)
+* Updated pip packages
 
 The experiments use the following datasets:
 - [NIH Osteoarthritis Initiative (OAI)](https://nda.nih.gov/oai/)
