@@ -1,12 +1,16 @@
 # VGG Concept Bottleneck Models
 
-This repository contains code and scripts from the following paper (with the model architecture change to VGG):
+This repository contains code and scripts from the following paper:
 
 > Concept Bottleneck Models
 >
 > Pang Wei Koh\*, Thao Nguyen\*, Yew Siang Tang\*, Stephen Mussmann, Emma Pierson, Been Kim, and Percy Liang
 >
 > ICML 2020
+
+Changes:
+* The model in this repository has been changed to VGG 16
+* Added a model converter (details below)
 
 The experiments use the following datasets:
 - [NIH Osteoarthritis Initiative (OAI)](https://nda.nih.gov/oai/)
@@ -58,3 +62,11 @@ docker pull codalab/default-gpu
 
 ## Usage
 Standard task training for CUB can be ran using the `scripts/experiments.sh` and Codalab scripts can be ran using `scripts/codalab_experiments.sh`. More information about how to perform data processing and other evaluations can be found in the README in `CUB/`.
+
+### CUB model converter
+
+If a concept bottleneck model is required without the ModuleList concept layer then a script has been provided which will convert this to a more standard linear layer. The model will be saved as a state_dict.
+
+`note: At the moment this only supports expand_dim == 0`
+
+Example: `python CUB_model_converter.py --best_model.pth --model_out_path ./model.pth`
