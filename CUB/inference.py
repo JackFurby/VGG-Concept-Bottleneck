@@ -240,7 +240,7 @@ if __name__ == '__main__':
     parser.add_argument('-image_dir', default='images', help='test image folder to run inference on')
     parser.add_argument('-n_class_attr', type=int, default=2, help='whether attr prediction is a binary or triary classification')
     parser.add_argument('-data_dir', default='', help='directory to the data used for evaluation')
-    parser.add_argument('-n_attributes', type=int, default=N_ATTRIBUTES, help='whether to apply bottlenecks to only a few attributes')    
+    parser.add_argument('-n_attributes', type=int, default=N_ATTRIBUTES, help='whether to apply bottlenecks to only a few attributes')
     parser.add_argument('-attribute_group', default=None, help='file listing the (trained) model directory for each attribute group')
     parser.add_argument('-feature_group_results', help='whether to print out performance of individual atttributes', action='store_true')
     parser.add_argument('-use_relu', help='Whether to include relu activation before using attributes to predict Y. For end2end & bottleneck model', action='store_true')
@@ -264,5 +264,7 @@ if __name__ == '__main__':
     output_string = '%.4f %.4f %.4f %.4f' % values
     print_string = 'Error of y: %.4f +- %.4f, Error of C: %.4f +- %.4f' % values
     print(print_string)
+    if not os.path.isdir(args.log_dir):  # if directory to save log does not exist; make it
+        os.mkdir(args.log_dir)
     output = open(os.path.join(args.log_dir, 'results.txt'), 'w')
     output.write(output_string)
