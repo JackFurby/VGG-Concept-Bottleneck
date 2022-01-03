@@ -217,6 +217,8 @@ def eval(args):
             print(acc_counts_per_bin)
             print("F1 bins:")
             print(f1_counts_per_bin)
+            if not os.path.isdir(args.log_dir):  # if directory to save log does not exist; make it
+                os.mkdir(args.log_dir)
             np.savetxt(os.path.join(args.log_dir, 'concepts.txt'), f1_counts_per_bin)
 
         balanced_acc, report = multiclass_metric(all_attr_outputs_int, all_attr_labels)
