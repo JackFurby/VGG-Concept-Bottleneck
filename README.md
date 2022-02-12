@@ -70,4 +70,4 @@ If a concept bottleneck model is required without the ModuleList concept layer t
 
 `note: At the moment this only supports expand_dim == 0`
 
-Example: `python CUB_model_converter.py --best_model.pth --model_out_path ./model.pth`
+Example: `python CUB_model_converter.py --model_1_path .path/to/XtoC/model.pth --model_2_path .path/to/CtoY/model.pth --model_out_path ./path/to/save/model.pth`
