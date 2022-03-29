@@ -29,7 +29,10 @@ def eval(args):
     wrong_idx: image ids where the model got the wrong class prediction (to compare with other models)
     """
     if args.model_dir:
-        model = torch.load(args.model_dir)
+        if torch.cuda.is_available():
+            model = torch.load(args.model_dir)
+        else:
+            model = torch.load(args.model_dir, map_location=torch.device('cpu'))
     else:
         model = None
 

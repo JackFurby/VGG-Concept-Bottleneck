@@ -210,7 +210,10 @@ def run(args):
     class_attr_max_label[equal_count] = 1
 
     attr_class_count = np.sum(class_attr_max_label, axis=0)
+    #print(attr_class_count, len(attr_class_count))
     mask = np.where(attr_class_count >= 10)[0]  # select attributes that are present (on a class level) in at least [min_class_count] classes
+
+    print(mask)
 
     instance_attr_labels, uncertainty_attr_labels = [], []
     test_data = pickle.load(open(os.path.join(args.data_dir2, 'test.pkl'), 'rb'))
@@ -227,9 +230,10 @@ def run(args):
         if k in mask:
             class_attr_id_to_name[list(mask).index(k)] = v
 
+    # create dict for concept groups {groupID: [List of concept IDs]}
     attr_group_dict = dict()
     curr_group_idx = 0
-    with open('CUB_200_2011/attributes/attributes.txt', 'r') as f:
+    with open('datasets/CUB_200_2011/data/attributes/attributes.txt', 'r') as f:
         all_lines = f.readlines()
         line0 = all_lines[0]
         prefix = line0.split()[1][:10]
@@ -243,6 +247,7 @@ def run(args):
             else:
                 attr_group_dict[curr_group_idx].append(i + 1)
 
+    # update concept groups dict to only include concepts with 10 or more occurences
     for group_id, attr_ids in attr_group_dict.items():
         new_attr_ids = []
         for attr_id in attr_ids:

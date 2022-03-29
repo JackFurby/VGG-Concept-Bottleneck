@@ -1,5 +1,5 @@
 """
-Make train, val, test datasets based on train_test_split.txt, and by sampling val_ratio of the official train data to make a validation set 
+Make train, val, test datasets based on train_test_split.txt, and by sampling val_ratio of the official train data to make a validation set
 Each dataset is a list of metadata, each includes official image id, full image path, class label, attribute labels, attribute certainty scores, and attribute labels calibrated for uncertainty
 """
 import os
@@ -15,6 +15,8 @@ def extract_data(data_dir):
     cwd = os.getcwd()
     data_path = join(cwd,data_dir + '/images')
     val_ratio = 0.2
+
+    val_files = None  # fix crash, what does this do?
 
     path_to_id_map = dict() #map from full image path to image id
     with open(data_path.replace('images', 'images.txt'), 'r') as f:
@@ -74,6 +76,7 @@ def extract_data(data_dir):
     train_data = train_val_data[split :]
     val_data = train_val_data[: split]
     print('Size of train set:', len(train_data))
+    return train_data, val_data, test_data
 
 
 if __name__ == "__main__":
@@ -82,6 +85,9 @@ if __name__ == "__main__":
     parser.add_argument('-data_dir', help='Where to load the datasets')
     args = parser.parse_args()
     train_data, val_data, test_data = extract_data(args.data_dir)
+
+    if not os.path.exists(args.save_dir):
+        os.makedirs(args.save_dir)
 
     for dataset in ['train','val','test']:
         print("Processing %s set" % dataset)
@@ -93,4 +99,3 @@ if __name__ == "__main__":
         else:
             pickle.dump(test_data, f)
         f.close()
-
