@@ -197,7 +197,7 @@ def run(args):
     data = pickle.load(open(os.path.join(args.data_dir2, 'train.pkl'), 'rb'))
     class_attr_count = np.zeros((N_CLASSES, N_ATTRIBUTES, 2))
     for d in data:
-        class_label = d['class_label']
+        class_label = d['class_label'] -1
         certainties = d['attribute_certainty']
         for attr_idx, a in enumerate(d['attribute_label']):
             if a == 0 and certainties[attr_idx] == 1:  # not visible
