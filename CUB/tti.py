@@ -195,9 +195,9 @@ def run(args):
     class_to_folder, attr_id_to_name = get_class_attribute_names()
 
     data = pickle.load(open(os.path.join(args.data_dir2, 'train.pkl'), 'rb'))
-    class_attr_count = np.zeros((N_CLASSES, N_ATTRIBUTES, 2))
+    class_attr_count = np.zeros((N_CLASSES, N_ATTRIBUTES, 2))  # ensure N_CLASSES and N_ATTRIBUTES matches dataset
     for d in data:
-        class_label = d['class_label'] -1
+        class_label = d['class_label'] - 1
         certainties = d['attribute_certainty']
         for attr_idx, a in enumerate(d['attribute_label']):
             if a == 0 and certainties[attr_idx] == 1:  # not visible
@@ -212,8 +212,6 @@ def run(args):
     attr_class_count = np.sum(class_attr_max_label, axis=0)
     #print(attr_class_count, len(attr_class_count))
     mask = np.where(attr_class_count >= 10)[0]  # select attributes that are present (on a class level) in at least [min_class_count] classes
-
-    print(mask)
 
     instance_attr_labels, uncertainty_attr_labels = [], []
     test_data = pickle.load(open(os.path.join(args.data_dir2, 'test.pkl'), 'rb'))
@@ -348,5 +346,7 @@ if __name__ == '__main__':
     for no_intervention_group, value in zip(no_intervention_groups, values):
         output_string += '%.4f %.4f\n' % (no_intervention_group, value)
     print(output_string)
+    if not os.path.exists(args.log_dir):
+        os.makedirs(args.log_dir)
     output = open(os.path.join(args.log_dir, 'results.txt'), 'w')
     output.write(output_string)

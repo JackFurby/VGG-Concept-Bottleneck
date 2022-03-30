@@ -1,7 +1,7 @@
 
 # General
 BASE_DIR = ''
-N_ATTRIBUTES = 312
+N_ATTRIBUTES = 112
 N_CLASSES = 200
 
 # Training

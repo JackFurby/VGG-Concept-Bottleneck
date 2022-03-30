@@ -73,6 +73,7 @@ def get_class_attributes_data(min_class_count, out_dir, modify_data_dir='', keep
     183, 187, 188, 193, 194, 196, 198, 202, 203, 208, 209, 211, 212, 213, 218, 220, 221, 225, 235, 236, 238, 239, 240, 242, 243, 244, 249, 253, \
     254, 259, 260, 262, 268, 274, 277, 283, 289, 292, 293, 294, 298, 299, 304, 305, 308, 309, 310, 311]
     """
+    
     data = pickle.load(open('train.pkl', 'rb'))
     class_attr_count = np.zeros((N_CLASSES, N_ATTRIBUTES, 2))
     for d in data:
