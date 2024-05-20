@@ -32,6 +32,8 @@ def run_epoch_simple(model, optimizer, loader, loss_meter, acc_meter, criterion,
             #inputs = [i.long() for i in inputs]
             inputs = torch.stack(inputs).t().float()
         inputs = torch.flatten(inputs, start_dim=1).float()
+        if args.exp == "Sequential_CtoY" and args.use_sigmoid:
+            inputs = torch.nn.Sigmoid()(inputs)
         inputs_var = torch.autograd.Variable(inputs).cuda()
         inputs_var = inputs_var.cuda() if torch.cuda.is_available() else inputs_var
         labels_var = torch.autograd.Variable(labels).cuda()
