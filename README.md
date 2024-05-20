@@ -10,6 +10,7 @@ This repository contains code and scripts from the following paper:
 
 Changes:
 * The model in this repository has been changed to VGG 16
+* Indexing for CUB dataset classes and concepts is from 1, not 0
 * Added a model converter (details below)
 * Updated pip packages
 
